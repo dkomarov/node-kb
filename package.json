@@ -4,12 +4,15 @@
   "description": "Knowledge Base app for Node JS",
   "main": "app.js",
   "scripts": {
-    "start": "node app"
+    "start": "nodemon app"
   },
   "author": "Denis Komarov",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
     "pug": "^2.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }
