@@ -1,0 +1,15 @@
+{
+  "name": "node-kb",
+  "version": "1.0.0",
+  "description": "Knowledge Base app for Node JS",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app"
+  },
+  "author": "Denis Komarov",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pug": "^2.0.4"
+  }
+}
