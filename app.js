@@ -1,6 +1,27 @@
 const express = require('express')
 const path = require('path');
+const mongoose = require('mongoose')
 
+if (process.env.NODE_ENV !== 'production') { // set by default by Node
+  require('dotenv').config({path: '.env'})
+}
+
+mongoose.connect(process.env.MONGO_URL, {
+  useNewUrlParser: true,  
+  useUnifiedTopology: true 
+});
+
+let db = mongoose.connection;
+
+// Check connection
+db.once('open', function(){
+  console.log('Connected to MongoDB')
+})
+
+// Check for db errors
+db.on('error', function(err) {
+  console.log(err)
+})
 // Init app
 const app = express();
 
