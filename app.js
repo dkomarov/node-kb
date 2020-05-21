@@ -29,31 +29,27 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
 
+// Body Parser Middleware
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
+// Bring in Models
+const Article = require('./models/article')
+
 // Home Route
 app.get('/', function(req, res) {
-  let articles = [
-    {
-      id: 1,
-      title: 'Article One',
-      author: 'Denis',
-      body: 'This is article one'
-    },
-    {
-      id: 2,
-      title: 'Article Two',
-      author: 'Jacob',
-      body: 'This is article two'
-    },
-    {
-      id: 3,
-      title: 'Article Three',
-      author: 'Sam',
-      body: 'This is article three'
-    }
-  ]
-  res.render('index', {
-    title: 'Articles',
-    articles: articles
+  Article.find({}, function(err, articles){
+    if (err){
+      console.log(err)
+    } else {
+    res.render('index', {
+      title: 'Articles',
+      articles: articles
+    });
+  }
   });
 });
 
