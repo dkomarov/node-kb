@@ -74,6 +74,18 @@ app.get('/articles/add', function(req, res){
   });
 })
 
+// Load Edit Form
+app.get('/article/edit/:id', function(req, res) {
+  Article.findById(req.params.id, function(err, article){
+    res.render('edit_article', {
+      title: 'Edit Article',
+      article: article
+    })
+    return;
+  });
+});
+
+// Submit POST Route
 app.post('/articles/add', function(req, res){
   let article = new Article();
   article.title = req.body.title;
