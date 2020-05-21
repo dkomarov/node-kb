@@ -60,6 +60,7 @@ app.get('/articles/add', function(req, res){
   });
 })
 
+      return;
 // Start Server
 app.listen(3000, function() {
   console.log('server started on port 3000')
