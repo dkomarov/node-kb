@@ -128,3 +128,20 @@ app.post('/articles/edit/:id', function(req, res){
     console.log(req.body.title, 'updated.')
   });
 });
+
+// Delete article route
+app.delete('/article/:id', function(req, res){
+  let query = {_id: req.params.id}
+
+  Article.deleteOne(query, function(err){
+    if(err){
+      console.log(err);
+    }
+    res.send('Success')
+  });
+});
+
+// Start Server
+app.listen(3000, function() {
+  console.log('server started on port 3000')
+});
