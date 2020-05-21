@@ -17,12 +17,12 @@ let db = mongoose.connection;
 // Check connection
 db.once('open', function(){
   console.log('Connected to MongoDB')
-})
+});
 
 // Check for db errors
 db.on('error', function(err) {
   console.log(err)
-})
+});
 // Init app
 const app = express();
 
@@ -99,15 +99,11 @@ app.post('/articles/add', function(req, res){
     } else {
       res.redirect('/');
     }
-  })
-  console.log(req.body.title)
+    console.log(req.body.title, 'added.')
+  });
   return;
-})
+});
 
-// Start Server
-app.listen(3000, function() {
-  console.log('server started on port 3000')
-})
 // Update Submit POST Route
 app.post('/articles/edit/:id', function(req, res){
   let article = {};
