@@ -108,3 +108,23 @@ app.post('/articles/add', function(req, res){
 app.listen(3000, function() {
   console.log('server started on port 3000')
 })
+// Update Submit POST Route
+app.post('/articles/edit/:id', function(req, res){
+  let article = {};
+  article.title = req.body.title;
+  article.author = req.body.author;
+  article.body = req.body.body;
+
+  let query = {_id:req.params.id}
+
+  Article.updateOne(query, article, function(err){
+    if(err){
+      console.log(err);
+      return;
+    } else {
+      res.redirect('/');
+    }
+
+    console.log(req.body.title, 'updated.')
+  });
+});
