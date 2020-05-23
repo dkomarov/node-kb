@@ -5,6 +5,9 @@ const bodyParser = require('body-parser')
 const expressValidator = require('express-validator')
 const session = require('express-session')
 
+const Article = require('./models/article')
+const User = require('./models/user')
+
 if (process.env.NODE_ENV !== 'production') { // set by default by Node
   require('dotenv').config({path: '.env'})
 }
@@ -74,8 +77,11 @@ app.use(expressValidator({
   }
 }))
 
-// Bring in Models
-const Article = require('./models/article')
+// Route Files
+const articles = require('./routes/articles')
+const users = require('./routes/users')
+app.use('/articles', articles)
+app.use('/users', users)
 
 // Home Route
 app.get('/', function(req, res) {
@@ -90,10 +96,6 @@ app.get('/', function(req, res) {
   }
   });
 });
-
-// Route Files
-const article = require('./routes/articles')
-app.use('/articles', article)
 
 // Start Server
 app.listen(3000, function() {
