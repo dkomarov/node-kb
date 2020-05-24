@@ -37,11 +37,11 @@ router.post('/register', function(req, res){
       name:name,
       email:email,
       username:username,
-      password:pw
+      password:password
     })
 
     bcrypt.genSalt(10, function(err, salt){
-      bcrypt.hash(newUser.pw, salt, function(err, hash){
+      bcrypt.hash(newUser.password, salt, function(err, hash){
         if (err){
           console.log(err);
         } else {
