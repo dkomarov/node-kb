@@ -11,23 +11,24 @@ router.get('/register', function(req, res){
   res.render('register', {title: 'Register'})
 })
 
+// Register process
 router.post('/register', function(req, res){
-
   let name = req.body.name;
   let email = req.body.email;
   let username = req.body.username;
-  let pw = req.body.pw;
-  let pw2 = req.body.pw2;
+  let password = req.body.password;
+  let password2 = req.body.password2;
 
   req.checkBody('name', 'Name is required').notEmpty();
-  req.checkBody('email', 'Email is required').isEmail();
+  req.checkBody('email', 'Email is required').notEmpty();
+  req.checkBody('email', 'Email is not valid').isEmail();
   req.checkBody('username', 'Username is required').notEmpty();
-  req.checkBody('pw', 'Password is required').notEmpty();
-  req.checkBody('pw2', 'Passwords do not match').equals(req.body.pw);
+  req.checkBody('password', 'Password is required').notEmpty();
+  req.checkBody('password2', 'Passwords do not match').equals(password);
 
   let errors = req.validationErrors();
 
-  if(errors){
+  if (errors) {
     res.render('register', {
       errors: errors
     })
