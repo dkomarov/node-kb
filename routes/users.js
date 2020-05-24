@@ -44,23 +44,21 @@ router.post('/register', function(req, res){
       bcrypt.hash(newUser.password, salt, function(err, hash){
         if (err){
           console.log(err);
-        } else {
-          newUser.pw = hash;
         }
-      })
-  
-      newUser.save(function(err){
-        if (err) {
-          console.log(err)
-          return;
-        } else {
-          req.flash('success', 'You are now registered and can log in')
-          res.redirect('/users/login')
-        }
+        newUser.password = hash;
+        newUser.save(function(err){
+          if (err) {
+            console.log(err)
+            return;
+          } else {
+            req.flash('success', 'You are now registered and can log in')
+            res.redirect('/users/login')
+          }
+        });
       });
     });
   }
-})
+});
 
 // Login form
 router.get('/login', function(req, res){
