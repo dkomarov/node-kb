@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router();
 const bcrypt = require('bcryptjs')
+const passport = require('passport')
 
 // bring in user model
 const User = require('../models/user');
@@ -10,23 +11,24 @@ router.get('/register', function(req, res){
   res.render('register', {title: 'Register'})
 })
 
+// Register process
 router.post('/register', function(req, res){
-
   let name = req.body.name;
   let email = req.body.email;
   let username = req.body.username;
-  let pw = req.body.pw;
-  let pw2 = req.body.pw2;
+  let password = req.body.password;
+  let password2 = req.body.password2;
 
   req.checkBody('name', 'Name is required').notEmpty();
-  req.checkBody('email', 'Email is required').isEmail();
+  req.checkBody('email', 'Email is required').notEmpty();
+  req.checkBody('email', 'Email is not valid').isEmail();
   req.checkBody('username', 'Username is required').notEmpty();
-  req.checkBody('pw', 'Password is required').notEmpty();
-  req.checkBody('pw2', 'Passwords do not match').equals(req.body.pw);
+  req.checkBody('password', 'Password is required').notEmpty();
+  req.checkBody('password2', 'Passwords do not match').equals(password);
 
   let errors = req.validationErrors();
 
-  if(errors){
+  if (errors) {
     res.render('register', {
       errors: errors
     })
@@ -35,34 +37,48 @@ router.post('/register', function(req, res){
       name:name,
       email:email,
       username:username,
-      password:pw
+      password:password
     })
 
     bcrypt.genSalt(10, function(err, salt){
-      bcrypt.hash(newUser.pw, salt, function(err, hash){
+      bcrypt.hash(newUser.password, salt, function(err, hash){
         if (err){
           console.log(err);
-        } else {
-          newUser.pw = hash;
         }
-      })
-  
-      newUser.save(function(err){
-        if (err) {
-          console.log(err)
-          return;
-        } else {
-          req.flash('success', 'You are now registered and can log in')
-          res.redirect('/users/login')
-        }
+        newUser.password = hash;
+        newUser.save(function(err){
+          if (err) {
+            console.log(err)
+            return;
+          } else {
+            req.flash('success', 'You are now registered and can log in')
+            res.redirect('/users/login')
+          }
+        });
       });
     });
   }
-})
+});
 
 // Login form
 router.get('/login', function(req, res){
   res.render('login', {title: 'Login'})
+})
+
+// Login process
+router.post('/login', function(req, res, next){
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/users/login',
+    failureFlash: true
+  })(req, res, next);
+})
+
+// Logout
+router.get('/logout', function(req, res){
+  req.logout();
+  req.flash('success', 'You are logged out.')
+  res.redirect('/users/login')
 })
 
 module.exports = router;
