@@ -4,6 +4,25 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const expressValidator = require('express-validator')
 const session = require('express-session')
+const passport = require('passport')
+const config = require('./config/database')
+
+mongoose.connect(config.database, {
+  useNewUrlParser: true,  
+  useUnifiedTopology: true 
+});
+
+let db = mongoose.connection;
+
+// Check connection
+db.once('open', function(){
+  console.log('Connected config to MongoDB')
+});
+
+// Check for db errors
+db.on('error', function(err) {
+  console.log(err)
+});
 
 const Article = require('./models/article')
 const User = require('./models/user')
@@ -17,8 +36,6 @@ mongoose.connect(process.env.MONGO_URL, {
   useUnifiedTopology: true 
 });
 
-let db = mongoose.connection;
-
 // Check connection
 db.once('open', function(){
   console.log('Connected to MongoDB')
@@ -28,6 +45,7 @@ db.once('open', function(){
 db.on('error', function(err) {
   console.log(err)
 });
+
 // Init app
 const app = express();
 
@@ -75,7 +93,19 @@ app.use(expressValidator({
       value : value
     };
   }
-}))
+}));
+
+// Passport Config
+require('./config/passport')(passport)
+
+// Passport Middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('*', function(req, res, next){
+  res.locals.user = req.user || null;
+  next();
+});
 
 // Route Files
 const articles = require('./routes/articles')
