@@ -4,6 +4,9 @@ const router = express.Router();
 // bring in article model
 const Article = require('../models/article')
 
+// bring in user model
+const User = require('../models/user')
+
 // Add Route
 router.get('/add', function(req, res){
   res.render('add_article', {
@@ -25,7 +28,7 @@ router.get('/edit/:id', function(req, res) {
 // Submit POST Route
 router.post('/add', function(req, res){
   req.checkBody('title', 'Title is required.').notEmpty();
-  req.checkBody('author', 'Author is required.').notEmpty();
+ // req.checkBody('author', 'Author is required.').notEmpty();
   req.checkBody('body', 'Body is required.').notEmpty();
 
   // Get Errors
@@ -39,7 +42,7 @@ router.post('/add', function(req, res){
   } else {
     let article = new Article();
     article.title = req.body.title;
-    article.author = req.body.author;
+    article.author = req.user._id; // get author from user object
     article.body = req.body.body;
   
     article.save(function(err){
@@ -81,7 +84,11 @@ router.post('/edit/:id', function(req, res){
 
 // Delete article route
 router.delete('/:id', function(req, res){
-  let query = {_id: req.params.id}
+  let uid = req.user._id
+  if(!uid){ // if user not logged in
+    res.status(500).send();
+  } else {
+    let query = {_id: req.params.id}
 
   Article.deleteOne(query, function(err){
     if(err){
@@ -95,10 +102,14 @@ router.delete('/:id', function(req, res){
 // Get Single Article
 router.get('/:id', function(req, res) {
   Article.findById(req.params.id, function(err, article){
-    res.render('article', {
-      article: article
+    User.findById(article.author, function (err, user) {
+      res.render('article', {
+        article: article,
+        author: user.name
+      })
+      return;
+      
     })
-    return;
   });
 });
 
