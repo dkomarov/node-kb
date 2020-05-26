@@ -24,8 +24,8 @@ db.on('error', function(err) {
   console.log(err)
 });
 
-const Article = require('./models/article')
-const User = require('./models/user')
+const Article = require('./models/article_model')
+const User = require('./models/user_model')
 
 if (process.env.NODE_ENV !== 'production') { // set by default by Node
   require('dotenv').config({path: '.env'})

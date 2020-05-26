@@ -2,10 +2,10 @@ const express = require('express')
 const router = express.Router();
 
 // bring in article model
-const Article = require('../models/article')
+const Article = require('../models/article_model')
 
 // bring in user model
-const User = require('../models/user')
+const User = require('../models/user_model')
 
 // Add Route
 router.get('/add', ensureAuth, function(req, res){

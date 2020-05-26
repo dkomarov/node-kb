@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const passport = require('passport')
 
 // bring in user model
-const User = require('../models/user');
+const User = require('../models/user_model');
 
 // Register form
 router.get('/register', function(req, res){
