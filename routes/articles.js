@@ -29,7 +29,7 @@ router.get('/edit/:id', ensureAuth, function(req, res) {
 });
 
 // Submit POST Route
-router.post('/add', function(req, res){
+router.post('/add', ensureAuth, function(req, res){
   req.checkBody('title', 'Title is required.').notEmpty();
   // req.checkBody('author', 'Author is required.').notEmpty();
   req.checkBody('body', 'Body is required.').notEmpty();
