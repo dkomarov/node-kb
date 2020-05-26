@@ -65,24 +65,35 @@ router.post('/add', function(req, res){
 
 // Update Submit POST Route
 router.post('/edit/:id', function(req, res){
-  let article = {};
-  article.title = req.body.title;
-  article.author = req.body.author;
-  article.body = req.body.body;
+  let uid = req.user._id
+  if(!uid){ // if user not logged in
+    res.status(500).send();
+  } else {
 
-  let query = {_id:req.params.id}
+    let query = {_id:req.params.id}
 
-  Article.updateOne(query, article, function(err){
-    if(err){
-      console.log(err);
-      return;
-    } else {
-      req.flash('success', 'Article updated.')
-      res.redirect('/');
+    Article.findById(req.params.id, function(err, article){
+      if (err) {
+        console.log(err)
+      } else if (article.author != uid) { // if user does not own article
+        res.status(500).send();
+      } else {
+        let article = {};
+        article.title = req.body.title;
+        article.body = req.body.body;
+        Article.updateOne(query, article, function(err){
+          if(err){
+            console.log(err);
+            return;
+          } else {
+            req.flash('success', 'Article updated.')
+            res.redirect('/');
+          }
+          console.log(req.body.title, 'updated.')
+        });
+      }
+      });
     }
-
-    console.log(req.body.title, 'updated.')
-  });
 });
 
 // Delete article route
