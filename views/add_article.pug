@@ -5,9 +5,15 @@ block content
     form(method='POST', action='/articles/add')
         #form-group
             label Title:
+        if article
+            input.form-control(name='title', type='text' value = article.title)
+        else
             input.form-control(name='title', type='text')
         #form-group
             label Body:
-            input.form-control(name='body')
+        if article
+            input.form-control(name='body' type='text' value = article.body)
+        else
+            input.form-control(name='body' type='text')
         br
         input.btn.btn-primary(type='submit',value='Submit')
