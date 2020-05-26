@@ -17,11 +17,14 @@ router.get('/add', ensureAuth, function(req, res){
 // Load Edit Form
 router.get('/edit/:id', ensureAuth, function(req, res) {
   Article.findById(req.params.id, function(err, article){
+   if (article.author != req.user._id) {
+      req.flash('danger', 'Not Authorized');
+      return res.redirect('/')
+    }
     res.render('edit_article', {
       title: 'Edit Article',
       article: article
-    })
-    return;
+    });
   });
 });
 
@@ -90,12 +93,21 @@ router.delete('/:id', function(req, res){
   } else {
     let query = {_id: req.params.id}
 
-  Article.deleteOne(query, function(err){
-    if(err){
-      console.log(err);
+    Article.findById(req.params.id, function(err, article){
+      if (err) {
+        console.log(err)
+      } else if (article.author != uid) { // if user does not own article
+        res.status(500).send();
+      } else {
+        Article.deleteOne(query, function(err){
+          if(err){
+            console.log(err)
+          }
+          res.send('Success')
+          });
+        }
+      });
     }
-    res.send('Success')
-  });
 });
 
 
