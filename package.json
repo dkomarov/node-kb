@@ -4,7 +4,8 @@
   "description": "Knowledge Base app for Node JS",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app"
+    "start": "node app",
+    "devstart": "nodemon app"
   },
   "author": "Denis Komarov",
   "license": "ISC",
