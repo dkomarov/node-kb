@@ -38,7 +38,7 @@ if (process.env.NODE_ENV !== 'production') { // set by default by Node
 
 } else {
 
-  mongoose.connect( 'mongodb+srv://user2:'+ process.env.MONGO_ATLAS +'@cluster0-cxz4x.mongodb.net/node-kb?retryWrites=true&w=majority', {
+  mongoose.connect('mongodb+srv://user2:'+ process.env.MONGO_ATLAS +'@cluster0-cxz4x.mongodb.net/node-kb?retryWrites=true&w=majority', {
     useNewUrlParser: true,  
     useUnifiedTopology: true 
   });
