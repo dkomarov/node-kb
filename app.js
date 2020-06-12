@@ -29,12 +29,19 @@ const User = require('./models/user_model')
 
 if (process.env.NODE_ENV !== 'production') { // set by default by Node
   require('dotenv').config({path: '.env'})
-}
 
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,  
-  useUnifiedTopology: true 
-});
+  mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,  
+    useUnifiedTopology: true 
+  });
+
+} else {
+
+  mongoose.connect( 'mongodb+srv://user2:'+ process.env.MONGO_ATLAS +'@cluster0-cxz4x.mongodb.net/node-kb?retryWrites=true&w=majority', {
+    useNewUrlParser: true,  
+    useUnifiedTopology: true 
+  });
+}
 
 // Check connection
 db.once('open', function(){
