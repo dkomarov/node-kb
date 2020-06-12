@@ -88,9 +88,9 @@ app.use(function (req, res, next) {
 // Express Validator Middleware
 app.use(expressValidator({
   errorFormatter: function(param, msg, value) {
-    var namespace = param.split('.')
-    , root        = namespace.shift()
-    , formParam   = root;
+    var namespace = param.split('.'),
+             root = namespace.shift(),
+        formParam = root;
 
     while(namespace.length) {
       formParam += '[' + namespace.shift() + ']';
