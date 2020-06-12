@@ -134,7 +134,9 @@ app.get('/', function(req, res) {
   });
 });
 
-// Start Server
-app.listen(3000, function() {
-  console.log('Server started on: http://localhost:3000')
-});
+if (process.env.NODE_ENV !== 'production') {
+  // Start Server
+  app.listen(3000, function() {
+    console.log('Server started on: http://localhost:3000')
+  });
+}
