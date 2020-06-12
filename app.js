@@ -15,9 +15,9 @@ mongoose.connect(config.database, {
 let db = mongoose.connection;
 
 // Check connection
-db.once('open', function(){
-  console.log('Connected config to MongoDB')
-});
+// db.once('open', function(){
+//   console.log('Connected config to MongoDB')
+// });
 
 // Check for db errors
 db.on('error', function(err) {
@@ -29,12 +29,19 @@ const User = require('./models/user_model')
 
 if (process.env.NODE_ENV !== 'production') { // set by default by Node
   require('dotenv').config({path: '.env'})
-}
 
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,  
-  useUnifiedTopology: true 
-});
+  mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,  
+    useUnifiedTopology: true 
+  });
+
+} else {
+
+  mongoose.connect( 'mongodb+srv://user2:'+ process.env.MONGO_ATLAS +'@cluster0-cxz4x.mongodb.net/node-kb?retryWrites=true&w=majority', {
+    useNewUrlParser: true,  
+    useUnifiedTopology: true 
+  });
+}
 
 // Check connection
 db.once('open', function(){
@@ -127,7 +134,9 @@ app.get('/', function(req, res) {
   });
 });
 
-// Start Server
-app.listen(3000, function() {
-  console.log('server started on port 3000')
-});
+if (process.env.NODE_ENV !== 'production') {
+  // Start Server
+  app.listen(3000, function() {
+    console.log('Server started on: http://localhost:3000')
+  });
+}
