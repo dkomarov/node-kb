@@ -27,6 +27,7 @@ db.on('error', function(err) {
 const Article = require('./models/article_model')
 const User = require('./models/user_model')
 
+// check which environment is active (e.g. production)
 if (process.env.NODE_ENV !== 'production') { // set by default by Node
   require('dotenv').config({path: '.env'})
 
