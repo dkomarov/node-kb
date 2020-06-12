@@ -7,11 +7,6 @@ const session = require('express-session')
 const passport = require('passport')
 const config = require('./config/database')
 
-mongoose.connect(config.database, {
-  useNewUrlParser: true,  
-  useUnifiedTopology: true 
-});
-
 let db = mongoose.connection;
 
 // Check connection
@@ -30,6 +25,11 @@ const User = require('./models/user_model')
 // check which environment is active (e.g. production)
 if (process.env.NODE_ENV !== 'production') { // set by default by Node
   require('dotenv').config({path: '.env'})
+
+  mongoose.connect(config.database, {
+    useNewUrlParser: true,  
+    useUnifiedTopology: true 
+  });
 
   mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,  
