@@ -15,9 +15,9 @@ mongoose.connect(config.database, {
 let db = mongoose.connection;
 
 // Check connection
-db.once('open', function(){
-  console.log('Connected config to MongoDB')
-});
+// db.once('open', function(){
+//   console.log('Connected config to MongoDB')
+// });
 
 // Check for db errors
 db.on('error', function(err) {
@@ -129,5 +129,5 @@ app.get('/', function(req, res) {
 
 // Start Server
 app.listen(3000, function() {
-  console.log('server started on port 3000')
+  console.log('Server started on: http://localhost:3000')
 });
