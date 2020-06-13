@@ -2,7 +2,7 @@ doctype html
 html
   head  
     title KnowledgeBase
-    if !production
+    if env != 'production'
       link(rel='stylesheet' href='/bower_components/bootstrap/dist/css/bootstrap.css')
       link(rel='stylesheet' href='/css/style.css')
     else
@@ -43,7 +43,7 @@ html
       footer  
         p Copyright &copy; 2020
 
-    if !production
+    if env != 'production'
       script(src='/bower_components/jquery/dist/jquery.js')
       script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
     else
