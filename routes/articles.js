@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router();
+// const { check, validationResult } = require('express-validator')
 
 // bring in article model
 const Article = require('../models/article_model')
@@ -29,26 +30,36 @@ router.get('/edit/:id', ensureAuth, function(req, res) {
 });
 
 // Submit POST Route
-router.post('/add', ensureAuth, function(req, res){
-  req.checkBody('title', 'Title is required.').notEmpty();
-  // req.checkBody('author', 'Author is required.').notEmpty();
-  req.checkBody('body', 'Body is required.').notEmpty();
+router.post('/add', ensureAuth,
+//  [
+//   check('title').isLength({min:1}).trim().withMessage('Title required'),
+//   //check('author').isLength({min:1}).trim().withMessage('Author required'),
+//   check('body').isLength({min:1}).trim().withMessage('Body required')
+//  ], 
+ function(req, res){
+  // req.checkBody('title', 'Title is required.').notEmpty();
+  // // req.checkBody('author', 'Author is required.').notEmpty();
+  // req.checkBody('body', 'Body is required.').notEmpty();
 
   // Get Errors
-  let errors = req.validationErrors();
+  //let errors = req.validationErrors();
 
-  if(errors){
-    res.render('add_article', {
-      title: 'Add article',
-      article: req.body,
-      errors: errors
-    })
-  } else {
-    let article = new Article();
+  // let errors = validationResult(req);
+
+  // if (!errors.isEmpty()) {
+  //   console.log(errors);
+  //      res.render('add_article',
+  //       { 
+  //        article:article,
+  //        errors: errors.mapped()
+  //       });
+  //    }
+  //    else{
     article.title = req.body.title;
-    article.author = req.user._id; // get author from user object
+    article.author = req.body.author;
     article.body = req.body.body;
-  
+     
+
     article.save(function(err){
       if(err){
         console.log(err);
@@ -59,10 +70,24 @@ router.post('/add', ensureAuth, function(req, res){
       }
       console.log(req.body.title, 'added.')
     });
-    return;
-  }
+     //return;
+  });
 
-});
+//});
+
+    
+  // if(errors){
+  //   res.render('add_article', {
+  //     title: 'Add article',
+  //     article: req.body,
+  //     errors: errors
+  //   })
+  // } else {
+  //   let article = new Article();
+  //   article.title = req.body.title;
+  //   article.author = req.user._id; // get author from user object
+  //   article.body = req.body.body;
+
 
 // Update Submit POST Route
 router.post('/edit/:id', function(req, res){
