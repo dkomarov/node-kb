@@ -2,15 +2,17 @@ const express = require('express')
 const path = require('path');
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-const expressValidator = require('express-validator')
 const session = require('express-session')
 const passport = require('passport')
 const config = require('./config/database')
+// const { check, validationResult } = require('express-validator')
 
-mongoose.connect(config.database, {
-  useNewUrlParser: true,  
-  useUnifiedTopology: true 
-});
+const env = process.env.NODE_ENV ? process.env.NODE_ENV : "development" || "production";
+const port = process.env.PORT;
+const host = process.env.HOST;
+const live = process.env.LIVE;
+const debug = require('debug');
+
 
 let db = mongoose.connection;
 
@@ -27,8 +29,14 @@ db.on('error', function(err) {
 const Article = require('./models/article_model')
 const User = require('./models/user_model')
 
+// check which environment is active (e.g. production)
 if (process.env.NODE_ENV !== 'production') { // set by default by Node
   require('dotenv').config({path: '.env'})
+
+  mongoose.connect(config.database, {
+    useNewUrlParser: true,  
+    useUnifiedTopology: true 
+  });
 
   mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,  
@@ -37,7 +45,7 @@ if (process.env.NODE_ENV !== 'production') { // set by default by Node
 
 } else {
 
-  mongoose.connect( 'mongodb+srv://user2:'+ process.env.MONGO_ATLAS +'@cluster0-cxz4x.mongodb.net/node-kb?retryWrites=true&w=majority', {
+  mongoose.connect('mongodb+srv://user2:'+ process.env.MONGO_ATLAS +'@cluster0-cxz4x.mongodb.net/node-kb?retryWrites=true&w=majority', {
     useNewUrlParser: true,  
     useUnifiedTopology: true 
   });
@@ -55,6 +63,8 @@ db.on('error', function(err) {
 
 // Init app
 const app = express();
+
+app.set('port', port);
 
 // Load View Engine
 app.set('views', path.join(__dirname, 'views'))
@@ -84,23 +94,23 @@ app.use(function (req, res, next) {
   next();
 });
 
-// Express Validator Middleware
-app.use(expressValidator({
-  errorFormatter: function(param, msg, value) {
-    var namespace = param.split('.')
-    , root        = namespace.shift()
-    , formParam   = root;
+// // Express Validator Middleware
+// app.use(expressValidator({
+//   errorFormatter: function(param, msg, value) {
+//     var namespace = param.split('.'),
+//              root = namespace.shift(),
+//         formParam = root;
 
-    while(namespace.length) {
-      formParam += '[' + namespace.shift() + ']';
-    }
-    return {
-      param : formParam,
-      msg   : msg,
-      value : value
-    };
-  }
-}));
+//     while(namespace.length) {
+//       formParam += '[' + namespace.shift() + ']';
+//     }
+//     return {
+//       param : formParam,
+//       msg   : msg,
+//       value : value
+//     };
+//   }
+// }));
 
 // Passport Config
 require('./config/passport')(passport)
@@ -134,9 +144,47 @@ app.get('/', function(req, res) {
   });
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  // Start Server
-  app.listen(3000, function() {
-    console.log('Server started on: http://localhost:3000')
-  });
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
 }
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+
+var server = app.listen(port, function(){
+  if (env != 'production') {
+    console.log(`\nServer is running in ${env}. To connect, go to: http://${host}\n`);
+  } else {
+    console.log(`\nServer is running in ${env}. To connect, go to: https://${live}\n`);
+  }
+})
+
+server.on('error', onError);
+server.on('listening', onListening);
+
+module.exports = { env: process.env };
