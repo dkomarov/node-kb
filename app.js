@@ -7,6 +7,12 @@ const passport = require('passport')
 const config = require('./config/database')
 // const { check, validationResult } = require('express-validator')
 
+const env = process.env.NODE_ENV ? process.env.NODE_ENV : "development" || "production";
+const port = process.env.PORT;
+const host = process.env.HOST;
+const live = process.env.LIVE;
+const debug = require('debug');
+
 
 let db = mongoose.connection;
 
@@ -57,6 +63,8 @@ db.on('error', function(err) {
 
 // Init app
 const app = express();
+
+app.set('port', port);
 
 // Load View Engine
 app.set('views', path.join(__dirname, 'views'))
@@ -136,9 +144,45 @@ app.get('/', function(req, res) {
   });
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  // Start Server
-  app.listen(3000, function() {
-    console.log('Server started on: http://localhost:3000')
-  });
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
 }
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+
+var server = app.listen(port, function(){
+  if (env != 'production') {
+    console.log(`\nServer is running in ${env}. To connect, go to: http://${host}\n`);
+  } else {
+    console.log(`\nServer is running in ${env}. To connect, go to: https://${live}\n`);
+  }
+})
+
+server.on('error', onError);
+server.on('listening', onListening);
