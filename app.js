@@ -186,3 +186,5 @@ var server = app.listen(port, function(){
 
 server.on('error', onError);
 server.on('listening', onListening);
+
+module.exports = { env: process.env };
