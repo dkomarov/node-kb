@@ -55,10 +55,12 @@ router.post('/add', ensureAuth,
   //       });
   //    }
   //    else{
-    article.title = req.body.title;
-    article.author = req.body.author;
-    article.body = req.body.body;
-     
+
+    const article = new Article({
+      title: req.body.title,
+      author: req.user._id,
+      body: req.body.body
+    })
 
     article.save(function(err){
       if(err){
@@ -151,15 +153,16 @@ router.delete('/:id', function(req, res){
 // Get Single Article
 router.get('/:id', function(req, res) {
   Article.findById(req.params.id, function(err, article){
+    if (err) { console.log (err) } else { console.log('Article found:', article) }
     User.findById(article.author, function (err, user) {
+      if (err) { console.log (err) } else { console.log('User found:', user) }
       res.render('article', {
         article: article,
         author: user.name
       })
       return;
-      
     })
-  });
+  })
 });
 
 // Access Control
