@@ -1,11 +1,11 @@
 const express = require('express')
+const expressValidator = require('express-validator');
 const path = require('path');
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const passport = require('passport')
 const config = require('./config/database')
-// const { check, validationResult } = require('express-validator')
 
 const env = process.env.NODE_ENV ? process.env.NODE_ENV : "development" || "production";
 const port = process.env.PORT;
@@ -94,23 +94,23 @@ app.use(function (req, res, next) {
   next();
 });
 
-// // Express Validator Middleware
-// app.use(expressValidator({
-//   errorFormatter: function(param, msg, value) {
-//     var namespace = param.split('.'),
-//              root = namespace.shift(),
-//         formParam = root;
+// Express Validator Middleware
+app.use(expressValidator({
+  errorFormatter: function(param, msg, value) {
+    var namespace = param.split('.'),
+             root = namespace.shift(),
+        formParam = root;
 
-//     while(namespace.length) {
-//       formParam += '[' + namespace.shift() + ']';
-//     }
-//     return {
-//       param : formParam,
-//       msg   : msg,
-//       value : value
-//     };
-//   }
-// }));
+    while(namespace.length) {
+      formParam += '[' + namespace.shift() + ']';
+    }
+    return {
+      param : formParam,
+      msg   : msg,
+      value : value
+    };
+  }
+}));
 
 // Passport Config
 require('./config/passport')(passport)
@@ -129,6 +129,7 @@ const articles = require('./routes/articles')
 const users = require('./routes/users')
 app.use('/articles', articles)
 app.use('/users', users)
+
 
 // Home Route
 app.get('/', function(req, res) {
